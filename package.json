@@ -1,0 +1,25 @@
+{
+  "name": "magic-resume-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.2.0",
+  "scripts": {
+    "dev": "npm run demo:serve",
+    "start": "npm run demo:serve",
+    "typecheck": "tsc -p tsconfig.base.json --noEmit",
+    "check": "npm run typecheck",
+    "build:tmp": "tsc -p tsconfig.base.json --outDir .tmp-dist",
+    "test:specs": "npm run build:tmp && node --loader ./tests/alias-loader.mjs .tmp-dist/tests/run-specs.js",
+    "demo:serve": "npm run build:tmp && node --loader ./tests/alias-loader.mjs ./scripts/demo-server.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}

@@ -1,0 +1,215 @@
+﻿import type {
+  ImportResumeRequestDto,
+  ImportResumeResponseDto,
+  SaveDraftRequestDto,
+  SaveDraftResponseDto
+} from "./resume.dto";
+import type { ResumeAggregate } from "@magic/types/resume";
+
+interface ResumeEntity extends ResumeAggregate {}
+
+export class ResumeService {
+  private readonly resumes = new Map<string, ResumeEntity>();
+
+  constructor() {
+    const seed = createSeedResume();
+    this.resumes.set(seed.resumeId, seed);
+  }
+
+  getResume(resumeId: string): ResumeEntity | null {
+    return this.resumes.get(resumeId) ?? null;
+  }
+
+  saveDraft(
+    resumeId: string,
+    request: SaveDraftRequestDto
+  ): SaveDraftResponseDto | null {
+    const current = this.resumes.get(resumeId);
+    if (!current) {
+      return null;
+    }
+
+    if (request.baseVersion !== current.version) {
+      throw new Error(`VERSION_CONFLICT:current=${current.version}`);
+    }
+
+    const nextVersion = current.version + 1;
+    const next: ResumeEntity = {
+      ...request.snapshot,
+      version: nextVersion,
+      updatedAt: request.clientTs
+    };
+    this.resumes.set(resumeId, next);
+    return {
+      resumeId,
+      savedVersion: nextVersion,
+      updatedAt: next.updatedAt
+    };
+  }
+
+  importResume(request: ImportResumeRequestDto): ImportResumeResponseDto {
+    const resumeId = request.payload.resumeId;
+    this.resumes.set(resumeId, {
+      ...request.payload,
+      version: 1
+    });
+
+    return {
+      resumeId,
+      version: 1
+    };
+  }
+}
+
+function createSeedResume(): ResumeEntity {
+  return {
+    resumeId: "res_demo_001",
+    userId: "usr_demo_001",
+    title: "Aurora",
+    templateId: "tpl_classic_cn_v1",
+    version: 1,
+    basics: {
+      avatarUrl: "",
+      contacts: [
+        {
+          itemId: "c1",
+          icon: "phone",
+          label: "电话",
+          value: "130****1603"
+        },
+        {
+          itemId: "c2",
+          icon: "email",
+          label: "邮箱",
+          value: "***@163.com"
+        },
+        {
+          itemId: "c3",
+          icon: "github",
+          label: "GitHub",
+          value: "https://github.com/lovemoon51"
+        },
+        {
+          itemId: "c4",
+          icon: "website",
+          label: "网站",
+          value: "https://magicyan418.com"
+        }
+      ]
+    },
+    sections: [
+      {
+        sectionType: "education",
+        items: [
+          {
+            itemId: "e1",
+            title: "星海学院",
+            subtitle: "",
+            startDate: "2019-09-01",
+            endDate: "2023-06-30",
+            description: ""
+          }
+        ]
+      },
+      {
+        sectionType: "skill",
+        items: []
+      },
+      {
+        sectionType: "work",
+        items: [
+          {
+            itemId: "w1",
+            title: "甲子洞天科技",
+            subtitle: "前端蛊师",
+            startDate: "壬寅年冬",
+            endDate: "今",
+            description:
+              "镇守宗门核心产品「天机商城蛊阵」，执掌 React + TypeScript 丹炉。独炼「设计系统蛊池」，饲喂三百余组件供全宗弟子取用，令开发效率暴涨如潮。每逢大版本更新，吾以「可视化拖拽蛊器」降伏产品心魔，需求迭代速提五成。"
+          },
+          {
+            itemId: "w2",
+            title: "万虫谷网络",
+            subtitle: "初阶蛊修",
+            startDate: "庚子年春",
+            endDate: "壬寅年秋",
+            description:
+              "于遗老项目「混沌 ERP 蛊窟」中初试锋芒。以 Redux 蛊阵降伏四处奔流的状态妖兽，更以 Webpack 化蛊术重炼构建经脉，令冷启动速度由十息缩至三息。期间驯服 WebGL 蛊虫，炼就 3D 仓储可视化大阵，得长老赐「破局新锐」蛊号。"
+          }
+        ]
+      }
+    ],
+    modules: [
+      {
+        moduleId: "m_education",
+        heading: "教育背景",
+        icon: "education",
+        subtitle: "星海学院",
+        timeRange: "2019.09.01 ~ 2023.06.30",
+        format: "markdown",
+        content: "星海学院",
+        sectionType: "education"
+      },
+      {
+        moduleId: "m_summary",
+        heading: "自我介绍",
+        icon: "summary",
+        subtitle: "",
+        timeRange: "",
+        format: "markdown",
+        content: [
+          "（抱拳沉声）我乃大专巅峰，二转前端蛊师，修前端之道已二年半。以视觉为蛊引，代码为杀招，炼组件如炼丹，布状态似结阵。",
+          "（袖中飞出三道流光）吾掌三大仙蛊：一曰样式蛊，可化万般界面皮相；二曰状态蛊，能驭千重数据变化；三曰动效蛊，可令像素生灵起舞。",
+          "（展开蛊阵图卷）这些时日，斩过混沌需求妖兽，解过浏览器蛊毒，更在用户心海种下交互动效之蛊。凡所见之处，必以像素级精度炼之，以视觉驱动叩问前端大道。",
+          "（负手而立）代码如蛊，一念生万象。诸君且看——我这二年半修为，可能入得各位道友法眼？"
+        ].join("\n\n"),
+        sectionType: "custom"
+      },
+      {
+        moduleId: "m_work_1",
+        heading: "工作经历",
+        icon: "work",
+        subtitle: "甲子洞天科技 | 前端蛊师",
+        timeRange: "壬寅年冬 - 今",
+        format: "markdown",
+        content:
+          "镇守宗门核心产品「天机商城蛊阵」，执掌 React + TypeScript 丹炉。独炼「设计系统蛊池」，饲喂三百余组件供全宗弟子取用，令开发效率暴涨如潮。每逢大版本更新，吾以「可视化拖拽蛊器」降伏产品心魔，需求迭代速提五成。",
+        sectionType: "work"
+      },
+      {
+        moduleId: "m_work_2",
+        heading: "工作经历",
+        icon: "work",
+        subtitle: "万虫谷网络 | 初阶蛊修",
+        timeRange: "庚子年春 - 壬寅年秋",
+        format: "markdown",
+        content:
+          "于遗老项目「混沌 ERP 蛊窟」中初试锋芒。以 Redux 蛊阵降伏四处奔流的状态妖兽，更以 Webpack 化蛊术重炼构建经脉，令冷启动速度由十息缩至三息。期间驯服 WebGL 蛊虫，炼就 3D 仓储可视化大阵，得长老赐「破局新锐」蛊号。",
+        sectionType: "work"
+      },
+      {
+        moduleId: "m_project_1",
+        heading: "项目经验",
+        icon: "project",
+        subtitle: "天机商城蛊阵 | 主炼蛊师",
+        timeRange: "",
+        format: "markdown",
+        content:
+          "炼就「微前端子蛊巢」，贯通五大道统（React/Vue/原生），令三千页面如臂使指。独创「性能监测蛊虫」，实时吐纳首屏加载、交互反馈等十二项指标，核心转化率提升廿五。今此蛊阵日活百万，稳如磐石。",
+        sectionType: "custom"
+      },
+      {
+        moduleId: "m_project_2",
+        heading: "项目经验",
+        icon: "project",
+        subtitle: "移动端秘术阁 APP | 独修者",
+        timeRange: "",
+        format: "markdown",
+        content:
+          "以 React Native 为本命蛊，炼就跨平台双生之术。施「手势动效符咒」解「iOS/Android 道统之争」，用户触感如抚真蛊。发布七日即登灵 store 榜单前百，留存率超同业三成。",
+        sectionType: "custom"
+      }
+    ],
+    updatedAt: "2026-03-24T10:30:00Z"
+  };
+}

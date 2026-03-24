@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>简历生成器</title>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="top-nav">
+      <div class="top-nav__brand">
+        <div class="brand-mark">✦</div>
+        <strong>简历生成器</strong>
+        <span class="brand-tag" id="brandTag">周兵</span>
+      </div>
+      <div class="top-nav__actions">
+        <div class="mode-group" role="group" aria-label="页面模式">
+          <button class="mode-btn active" data-mode="both" type="button">编辑 + 预览</button>
+          <button class="mode-btn" data-mode="edit" type="button">仅编辑</button>
+          <button class="mode-btn" data-mode="preview" type="button">仅预览</button>
+        </div>
+        <button class="ghost-btn" id="loadBtn" type="button">加载</button>
+        <button class="ghost-btn" id="saveBtn" type="button">保存</button>
+        <button class="solid-btn" id="exportBtn" type="button">导出 PDF</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="split-layout" id="splitLayout">
+        <section class="editor-panel" id="editorPanel">
+          <section class="editor-card">
+            <div class="section-title">
+              <h2>简历标题</h2>
+            </div>
+            <label class="field">
+              <span>Resume ID</span>
+              <input id="resumeIdInput" value="res_demo_001" />
+            </label>
+            <label class="field">
+              <span>标题</span>
+              <input id="titleInput" />
+            </label>
+            <div class="meta">
+              <div>版本：<strong id="versionText">-</strong></div>
+              <div>更新时间：<strong id="updatedAtText">-</strong></div>
+              <div>状态：<strong id="statusText">idle</strong></div>
+            </div>
+          </section>
+
+          <section class="editor-card">
+            <div class="section-title">
+              <h2>个人信息</h2>
+              <button class="ghost-btn tiny-btn" id="addContactBtn" type="button">+ 添加信息</button>
+            </div>
+            <div class="avatar-editor">
+              <button
+                class="avatar-dropzone"
+                id="avatarPickerBtn"
+                type="button"
+                title="点击上传头像"
+              >
+                <img id="avatarPreview" class="avatar-preview hidden" alt="头像预览" />
+                <span id="avatarFallback">👤</span>
+              </button>
+              <div class="avatar-controls">
+                <label class="field">
+                  <span>头像 URL</span>
+                  <input id="avatarInput" placeholder="请输入头像图片 URL 或点击头像上传本地图片" />
+                </label>
+                <div class="avatar-actions">
+                  <button class="ghost-btn tiny-btn" id="uploadAvatarBtn" type="button">上传本地图片</button>
+                  <button class="ghost-btn tiny-btn" id="clearAvatarBtn" type="button">清空头像</button>
+                </div>
+                <p class="hint">建议使用 1:1 比例图片。支持 URL 和本地图片上传。</p>
+              </div>
+              <input id="avatarFileInput" type="file" accept="image/*" hidden />
+            </div>
+            <div id="contactList" class="contact-list"></div>
+          </section>
+
+          <section class="editor-card">
+            <div class="section-title">
+              <h2>简历模块</h2>
+              <button class="ghost-btn tiny-btn" id="addModuleBtn" type="button">+ 添加模块</button>
+            </div>
+            <div id="moduleList" class="module-list"></div>
+          </section>
+        </section>
+
+        <div class="split-line"></div>
+
+        <section class="preview-panel" id="previewPanel">
+          <article class="resume-paper">
+            <div class="preview-profile">
+              <h1 id="previewTitle">-</h1>
+              <div class="preview-avatar-wrap">
+                <img id="previewAvatar" class="preview-avatar hidden" alt="头像" />
+              </div>
+              <div id="previewContacts" class="preview-contacts"></div>
+            </div>
+            <div id="previewModules"></div>
+            <div id="exportResult" class="export-result"></div>
+          </article>
+        </section>
+      </section>
+    </main>
+
+    <div class="icon-modal hidden" id="iconModal">
+      <div class="icon-modal__backdrop" data-action="close-icon-modal"></div>
+      <section class="icon-modal__panel" role="dialog" aria-modal="true" aria-label="选择图标">
+        <header class="icon-modal__header">
+          <h3>选择图标</h3>
+          <button class="icon-modal__close" id="closeIconModalBtn" type="button">✕</button>
+        </header>
+        <input id="iconSearchInput" class="icon-search-input" placeholder="搜索图标..." />
+        <div id="iconGrid" class="icon-grid"></div>
+      </section>
+    </div>
+
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
