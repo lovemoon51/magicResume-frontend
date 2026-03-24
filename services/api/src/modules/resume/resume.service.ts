@@ -93,7 +93,7 @@ function createSeedResume(): ResumeEntity {
           itemId: "c4",
           icon: "website",
           label: "网站",
-          value: "https://magicyan418.com"
+          value: "https://lovemoon51.github.io/magicResume-frontend/"
         }
       ]
     },
